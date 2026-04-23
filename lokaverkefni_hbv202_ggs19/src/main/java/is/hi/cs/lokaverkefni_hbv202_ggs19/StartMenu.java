@@ -2,8 +2,8 @@ package is.hi.cs.lokaverkefni_hbv202_ggs19;
 import java.util.Scanner;
 
 public class StartMenu {
-    private static Boolean firstStart = true;
     private static Company[] companies = new Company[10]; 
+    private static int companyCount = 0;
     private static Scanner scanner = new Scanner(System.in);
 
     public static void access(String company) {
@@ -14,6 +14,11 @@ public class StartMenu {
             }
         }
         System.out.println("Company not found.");
+    }
+
+    public static void structure(String place) {
+        System.out.println("You are at:" + place);
+        System.out.println("startpage\n|--company\n|--balancesheet\n|--products\n|--shareholders\n   |--inputmaterials");
     }
 
     public static void createCompany() {
@@ -37,25 +42,31 @@ public class StartMenu {
         }
     }
 
-    public static void info() {
-        System.out.println("info for startpage.");
-    }
-
     public static void start(String[] order) {
+        for (int i = 0; i < order.length; i++) {
+            System.out.println(order[i]);
+        }
         while (true) {
-            if (firstStart) {
-                firstStart = false;
-                System.out.println("Welcome to the startpage! \nType info for help.");
-            } else if (order.length > 0) {
-                if (order[0].equals("info")) {
+            if (order.length > 0) {
+                if (order[0].equals("start")) {
+                  System.out.println("Welcome to the startpage! \nType info for help.");
+                  String[] nextOrder = order();
+                  start(nextOrder);
+                } else if (order[0].equals("info")) {
                     System.out.println("info for startpage.");
+                    String[] nextOrder = order();
+                    start(nextOrder);
                 } else if (order[0].equals("print")) {
                     System.out.println("print for startpage.");
+                    String[] nextOrder = order();
+                    start(nextOrder);
                 } else if (order[0].equals("access") && order.length > 1) {
                     access(order[1]);
                 } else if (order[0].equals("create")) {
                     createCompany();
-                }else {
+                } else if(order[0].equals("exit")) {
+                    System.exit(0);
+                } else {
                     System.out.println("Invalid command, type info for help.");
                 }
             }
@@ -70,7 +81,13 @@ public class StartMenu {
     }
 
     public static void main(String[] args) {
-        String[] start = {"Start"};
+        //prop
+        Shareholder warrenBuffet = new Shareholder("Warren Buffett", 100, 0);
+        Company apple = new Company("Apple", 1000000000.0, warrenBuffet);
+        companies[companyCount] = apple;
+        companyCount++;
+        //start
+        String[] start = {"start"};
         start(start);
     }
 }

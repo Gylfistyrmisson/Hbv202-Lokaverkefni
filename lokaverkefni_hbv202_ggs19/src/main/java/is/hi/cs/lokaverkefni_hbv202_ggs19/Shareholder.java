@@ -11,6 +11,10 @@ public class Shareholder {
         this.dividendsCollected = dividendsCollected;
     }
 
+    public static void shareholderStart(Shareholder[] shareholders) {
+        System.out.println("Wwelcome to shareholder! \nType info for help.");
+    }
+
     public String getName() {
         return name;
     }
@@ -39,5 +43,5 @@ public class Shareholder {
         this.dividendsCollected = dividendsCollected;
     }
 
-    
+
 }

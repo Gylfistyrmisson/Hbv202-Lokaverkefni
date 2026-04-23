@@ -17,6 +17,10 @@ public class Product implements Inventory{
         this.inputQuantity = new int[0];
     }
 
+    public static void productStart(Product[] products) {
+        System.out.println("Wwelcome to product! \nType info for help.");
+    }
+
     public String getName() {
         return name;
     }

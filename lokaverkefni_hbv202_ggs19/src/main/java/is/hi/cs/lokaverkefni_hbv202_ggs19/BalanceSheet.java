@@ -11,6 +11,10 @@ public class BalanceSheet {
         this.inventory = inventory;
     }
 
+    public void balancesheetStart() {
+        System.out.println("Wwelcome to balance sheet! \nType info for help.");
+    }
+
     public Double getCash() {
         return cash;
     }
@@ -27,6 +31,11 @@ public class BalanceSheet {
         this.loans = loans;
     }
 
+    public Inventory[] getInventory() {
+        return inventory;
+    }
 
-
+    public void setInventory(Inventory[] inventory) {
+        this.inventory = inventory;
+    }
 }
