@@ -11,8 +11,7 @@ public class Company {
 
     public Company(String name, Double cash,Shareholder shareholder) {
         this.name = name;
-        this.balanceSheet = new BalanceSheet(cash, new Loan[0], new Inventory[0]);
-        this.products = new Product[0];
+        this.balanceSheet = new BalanceSheet(this, cash);      
         this.shareholders = new Shareholder[]{shareholder};
         this.inputMaterials = new InputMaterial[0];
     }

@@ -18,7 +18,7 @@ public class StartMenu {
 
     public static void structure(String place) {
         System.out.println("You are at:" + place);
-        System.out.println("startpage\n|--company\n|--balancesheet\n|--products\n|--shareholders\n   |--inputmaterials");
+        System.out.println("startpage\n|--company\n|--balancesheet\\n   |--loans\n|--products\n|--shareholders\n   |--inputmaterials");
     }
 
     public static void createCompany() {

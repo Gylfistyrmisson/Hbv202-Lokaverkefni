@@ -11,6 +11,10 @@ public class InputMaterial implements Inventory{
         this.price = price;
     }
 
+    public double getAmount() {
+        return quantity * price;
+    }
+    
     public String getName() {
         return materialName;
     }
