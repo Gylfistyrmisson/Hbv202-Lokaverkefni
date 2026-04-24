@@ -49,7 +49,6 @@ public class CompanyTest extends TestCase {
         assertEquals("Cash should be 1000.0", 1000.0, company.getBalanceSheet().getCash());
         assertEquals("Shareholders array length should be 1", 1, company.getShareholders().length);
         assertEquals("Shareholder name should be 'Test Shareholder'", "Test Shareholder", company.getShareholders()[0].getName());
-        assertEquals("InputMaterials array length should be 0", 0, company.getInputMaterials().length);
     }
 
     /**
