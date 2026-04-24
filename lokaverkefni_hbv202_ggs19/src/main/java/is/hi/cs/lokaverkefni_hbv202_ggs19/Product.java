@@ -1,6 +1,6 @@
 package is.hi.cs.lokaverkefni_hbv202_ggs19;
 
-public class Product implements Inventory{
+public class Product implements InventoryInterface{
     
     private String name;
     private double price;
@@ -21,7 +21,7 @@ public class Product implements Inventory{
         return quantity * price;
     }
     
-    
+
     public static void productStart(Product[] products) {
         System.out.println("Wwelcome to product! \nType info for help.");
     }

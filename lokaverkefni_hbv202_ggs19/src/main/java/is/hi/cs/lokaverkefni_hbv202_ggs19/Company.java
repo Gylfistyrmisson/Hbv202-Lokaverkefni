@@ -23,8 +23,8 @@ public class Company {
             String[] nextOrder = StartMenu.order();
             companyOrder(nextOrder);
         } else if(order[0].equals("access")) {
-            if(order[1].equals("balance sheet")) {
-                balanceSheet.balancesheetStart();
+            if(order[1].equals("balance") && order[2].equals("sheet")) {
+                balanceSheet.start();
             } else if(order[1].equals("products")) {
                 Product.productStart(products);
             } else if(order[1].equals("shareholders")) {
@@ -62,6 +62,24 @@ public class Company {
         System.out.println("Wwelcome to " + name + "'s company! \nType info for help.");
         String[] order = StartMenu.order();
         companyOrder(order);
+    }
+
+    public void addShareholder(Shareholder shareholder) {
+        Shareholder[] newShareholders = new Shareholder[shareholders.length + 1];
+        for (int i = 0; i < shareholders.length; i++) {
+            newShareholders[i] = shareholders[i];
+        }
+        newShareholders[newShareholders.length - 1] = shareholder;
+        shareholders = newShareholders;
+    }
+
+    public void addProduct(Product product) {
+        Product[] newProducts = new Product[products.length + 1];
+        for (int i = 0; i < products.length; i++) {
+            newProducts[i] = products[i];
+        }
+        newProducts[newProducts.length - 1] = product;
+        products = newProducts;
     }
 
     public String getName() {

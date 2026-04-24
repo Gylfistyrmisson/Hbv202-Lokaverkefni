@@ -1,6 +1,6 @@
 package is.hi.cs.lokaverkefni_hbv202_ggs19;
 
-public class InputMaterial implements Inventory{
+public class InputMaterial implements InventoryInterface{
     private String materialName;
     private int quantity;
     private double price;

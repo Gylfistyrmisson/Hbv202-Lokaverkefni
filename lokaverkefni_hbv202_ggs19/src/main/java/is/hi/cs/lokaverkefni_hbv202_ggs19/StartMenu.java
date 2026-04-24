@@ -18,7 +18,7 @@ public class StartMenu {
 
     public static void structure(String place) {
         System.out.println("You are at:" + place);
-        System.out.println("startpage\n|--company\n|--balancesheet\\n   |--loans\n|--products\n|--shareholders\n   |--inputmaterials");
+        System.out.println("startpage\n|--company\n|--balancesheet\n   |--loans\n   |--inventory\n|--products\n|--shareholders\n   |--inputmaterials");
     }
 
     public static void createCompany() {
@@ -53,11 +53,15 @@ public class StartMenu {
                   String[] nextOrder = order();
                   start(nextOrder);
                 } else if (order[0].equals("info")) {
-                    System.out.println("info for startpage.");
+                    System.out.println("\"Command list:\\n info : display info of commands\\n access : layer benatch, followed by company name\\n print : prints out list of companies\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)\"");
                     String[] nextOrder = order();
                     start(nextOrder);
                 } else if (order[0].equals("print")) {
-                    System.out.println("print for startpage.");
+                    for (int i = 0; i < companies.length; i++) {
+                        if (companies[i] != null) {
+                            System.out.println(companies[i].getName());
+                        }
+                    }
                     String[] nextOrder = order();
                     start(nextOrder);
                 } else if (order[0].equals("access") && order.length > 1) {
@@ -77,15 +81,24 @@ public class StartMenu {
     public static String[] order() {
         System.out.print("> ");
         String input = scanner.nextLine();
-        return input.split(" ");
+        String[] order = input.split(" ");
+        String[] invalid = {"Invalid"};
+        if (order.length < 1) {
+            return invalid;
+        } else {
+            return order;
+        }
     }
 
     public static void main(String[] args) {
         //prop
         Shareholder warrenBuffet = new Shareholder("Warren Buffett", 100, 0);
-        Company apple = new Company("Apple", 1000000000.0, warrenBuffet);
+        Company apple = new Company("Apple", 1000000.0, warrenBuffet);
         companies[companyCount] = apple;
         companyCount++;
+        apple.getBalanceSheet().addLoan(new Loan("loan1", 1000.0, 24, 3.5));
+        apple.getBalanceSheet().addLoan(new Loan("loan2", 1500.0, 12, 4.0));
+
         //start
         String[] start = {"start"};
         start(start);
