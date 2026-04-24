@@ -15,6 +15,7 @@ public class Company {
         this.shareholders = new Shareholder[]{shareholder};
         this.inputMaterials = new InputMaterial[0];
     }
+    
 
     public void companyOrder(String[] order) {
 

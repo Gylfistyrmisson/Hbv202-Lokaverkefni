@@ -16,6 +16,13 @@ public class StartMenu {
         System.out.println("Company not found.");
     }
 
+    public static Company[] getCompanies() {
+    return companies;
+}
+
+    public static int getCompanyCount() {
+        return companyCount;
+    }
     public static void structure(String place) {
         System.out.println("You are at:" + place);
         System.out.println("startpage\n|--company\n|--balancesheet\n   |--loans\n   |--inventory\n|--products\n|--shareholders\n   |--inputmaterials");
