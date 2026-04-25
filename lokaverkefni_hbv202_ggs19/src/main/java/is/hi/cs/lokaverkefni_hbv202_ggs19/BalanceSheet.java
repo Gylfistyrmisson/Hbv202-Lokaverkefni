@@ -14,7 +14,7 @@ public class BalanceSheet {
     private Double cash;
 
     /** Array storing loans associated with the company */
-    private Loan[] loans = new Loan[10];
+    private Loan[] loans = new Loan[0];
 
     /** Array storing inventory items */
     private InventoryInterface[] inventory = new InventoryInterface[10];
@@ -33,58 +33,31 @@ public class BalanceSheet {
     /**
      * Handles user commands within the balance sheet context.
      * Routes commands to loans, inventory, or displays financial data.
-     *
-     * @param order user input split into command tokens
      */
-    public void balancesheetOrder(String[] order) {
-
+    public boolean balancesheetOrder() {
+        String[] order = StartMenu.order();
         if (order[0].equals("info")) {
-            System.out.println("Command list:\\n info : display info of commands\\n access : layer benath, followed by: loans, inventory\\n info : display info of commands\\n print : prints out summary of balance sheet data\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)\"");
-            String[] nextOrder = StartMenu.order();
-            balancesheetOrder(nextOrder);
-
+            System.out.println("Command list:\n info : display info of commands\n access : layer benath, followed by: loans, inventory\n print : prints out summary of balance sheet data\n structure : prints out where in company structure you are(global command)\n back : back to layer above(global command)\n exit : exit program(global command)");
         } else if (order[0].equals("access") && order.length > 1) {
             if (order[1].equals("loans")) {
                 Loan.start(this);
             } else if (order[1].equals("inventory")) {
                 Inventory.start(company);
             } else {
-                System.out.println("The balance sheet does not contain a " + order[1] + " section to access.");
+                System.out.println("Invalid command, type info for help.");
             }
-
         } else if (order[0].equals("print")) {
-            System.out.println("Cash: " + cash);
-
-            double loanAmount = 0;
-            for (int i = 0; i < loans.length; i++) {
-                if (loans[i] != null) {
-                    loanAmount += loans[i].getAmount();
-                }
-            }
-            System.out.println("Loans:" + loanAmount);
-
-            double inventoryAmount = 0;
-            for (int i = 0; i < inventory.length; i++) {
-                if (inventory[i] != null) {
-                    inventoryAmount += inventory[i].getAmount();
-                }
-            }
-            System.out.println("Inventory:" + inventoryAmount);
-
-            String[] nextOrder = StartMenu.order();
-            balancesheetOrder(nextOrder);
-
+            printBalanceSheet();
         } else if (order[0].equals("structure")) {
             StartMenu.structure("balancesheet");
-            String[] nextOrder = StartMenu.order();
-            balancesheetOrder(nextOrder);
 
         } else if (order[0].equals("back")) {
-            company.companyStart();
-
+            System.out.println("Welcome to " + company.getName() + "'s company! \nType info for help.");
+            return false;
         } else if (order[0].equals("exit")) {
             System.exit(0);
         }
+        return true;
     }
 
     /**
@@ -92,9 +65,32 @@ public class BalanceSheet {
      * Displays a welcome message and begins command processing.
      */
     public void start() {
+        Boolean run = true;
         System.out.println("Welcome to the balance sheet! \nType info for help.");
-        String[] nextOrder = StartMenu.order();
-        balancesheetOrder(nextOrder);
+        while (run) {
+            run = balancesheetOrder();
+        }
+    }
+
+    /**
+     * Prints a summary of the balance sheet data.
+     */
+    public void printBalanceSheet() {
+        System.out.println("Cash: " + cash);
+        double loanAmount = 0;
+        for (int i = 0; i < loans.length; i++) {
+            if (loans[i] != null) {
+                loanAmount += loans[i].getAmount();
+            }
+        }
+        System.out.println("Loans:" + loanAmount);
+        double inventoryAmount = 0;
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] != null) {
+                inventoryAmount += inventory[i].getAmount();
+            }
+        }
+        System.out.println("Inventory:" + inventoryAmount);
     }
 
     /**
@@ -103,12 +99,12 @@ public class BalanceSheet {
      * @param loan the loan to add
      */
     public void addLoan(Loan loan) {
+        Loan[] newLoans = new Loan[loans.length + 1];
         for (int i = 0; i < loans.length; i++) {
-            if (loans[i] == null) {
-                loans[i] = loan;
-                break;
-            }
+            newLoans[i] = loans[i];
         }
+        newLoans[loans.length] = loan;
+        this.loans = newLoans;
     }
 
     /**
@@ -181,5 +177,18 @@ public class BalanceSheet {
      */
     public void setInventory(InventoryInterface[] inventory) {
         this.inventory = inventory;
+    }
+
+    /**
+     * Removes a loan from the loans array.
+     *
+     * @param loan loan to remove
+     */
+    public void removeLoan(Loan loan) {
+        for (int i = 0; i < loans.length; i++) {
+            if (loans[i] == loan) {
+                loans[i] = null;
+            }
+        }
     }
 }

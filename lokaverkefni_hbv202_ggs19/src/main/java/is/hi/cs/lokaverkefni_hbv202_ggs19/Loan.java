@@ -42,130 +42,31 @@ public class Loan {
      * @param balanceSheet the balance sheet containing loan data
      * @param order user input command array
      */
-    public static void loanOrder(BalanceSheet balanceSheet, String[] order) {
-
+    public static Boolean loanOrder(BalanceSheet balanceSheet) {
+        String[] order = StartMenu.order();
         if (order[0].equals("info")) {
-            System.out.println("Command list:\\ issue: issue a loan\\n payment: make a payment\\n payback: pay back full loan amount\\n info : display info of commands\\n print : prints out summary of loans data\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)");
-            String[] nextOrder = StartMenu.order();
-            loanOrder(balanceSheet, nextOrder);
-
+            System.out.println("Command list:\n issue: issue a loan\n payment: make a payment\n payoff: pay back full loan amount\n info : display info of commands\n print : prints out summary of loans data\n structure : prints out where in company structure you are(global command)\n back : back to layer above(global command)\n exit : exit program(global command)");
         } else if (order[0].equals("structure")) {
-            StartMenu.structure("loan");
-            String[] nextOrder = StartMenu.order();
-            loanOrder(balanceSheet, nextOrder);
-
+            StartMenu.structure("loans");
         } else if (order[0].equals("print")) {
-            Loan[] loans = balanceSheet.getLoans();
-
-            for (int i = 0; i < loans.length; i++) {
-                if (loans[i] != null) {
-                    System.out.println(
-                        "Name: " + loans[i].getName() +
-                        "\nAmount: " + loans[i].getAmount() +
-                        "\nMonths: " + loans[i].getMonths() +
-                        "\nRate: " + loans[i].getRate() +
-                        "\nMonthly payment: " + loans[i].getMonthlyPayment()
-                    );
-                }
-            }
-
-            String[] nextOrder = StartMenu.order();
-            loanOrder(balanceSheet, nextOrder);
-
+            printLoans(balanceSheet);
+        } else if (order[0].equals("payment")) {
+            paymentLoan(balanceSheet);
         } else if (order[0].equals("issue")) {
             issueLoan(balanceSheet);
-
-        } else if (order[0].equals("payback")) {
-
-            Loan[] loans = balanceSheet.getLoans();
-
-            System.out.println("Please type the number of the loan you want to pay back: ");
-
-            for (int i = 0; i < loans.length; i++) {
-                if (loans[i] != null) {
-                    System.out.println((i + 1) + ".\nName: " + loans[i].getName());
-                }
-            }
-
-            String[] nextOrder = StartMenu.order();
-
-            try {
-                Integer.parseInt(nextOrder[0]);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid command, not a number");
-                start(balanceSheet);
-                return;
-            }
-
-            int loanNumber = Integer.parseInt(nextOrder[0]);
-
-            try {
-                Loan loan = balanceSheet.getLoans()[loanNumber - 1];
-                if (loan == null) {
-                    System.out.println("Invalid command, no loan found.");
-                    start(balanceSheet);
-                    return;
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid command, no loan found.");
-                start(balanceSheet);
-                return;
-            }
-
-            Loan loan = balanceSheet.getLoans()[loanNumber - 1];
-            paybackLoan(balanceSheet, loan);
-
+        } else if (order[0].equals("payoff")) {
+            payOffLoan(balanceSheet);
         } else if (order[0].equals("payment")) {
-
-            Loan[] loans = balanceSheet.getLoans();
-
-            System.out.println("Please type the number of the loan you want to make a payment on: ");
-
-            for (int i = 0; i < loans.length; i++) {
-                if (loans[i] != null) {
-                    System.out.println((i + 1) + ".\nName: " + loans[i].getName());
-                }
-            }
-
-            String[] nextOrder = StartMenu.order();
-
-            try {
-                Integer.parseInt(nextOrder[0]);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid command, not a number.");
-                start(balanceSheet);
-                return;
-            }
-
-            int loanNumber = Integer.parseInt(nextOrder[0]);
-
-            try {
-                Loan loan = balanceSheet.getLoans()[loanNumber - 1];
-                if (loan == null) {
-                    System.out.println("Invalid command, no loan found.");
-                    start(balanceSheet);
-                    return;
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid command, no loan found.");
-                start(balanceSheet);
-                return;
-            }
-
-            Loan loan = balanceSheet.getLoans()[loanNumber - 1];
-            paymentLoan(balanceSheet, loan);
-
+            paymentLoan(balanceSheet);
         } else if (order[0].equals("back")) {
-            balanceSheet.start();
-
+            System.out.println("Welcome to the balance sheet! \nType info for help.");
+            return false;
         } else if (order[0].equals("exit")) {
             System.exit(0);
-
         } else {
             System.out.println("Invalid command, type info for help.");
-            String[] nextOrder = StartMenu.order();
-            loanOrder(balanceSheet, nextOrder);
         }
+        return true;
     }
 
     /**
@@ -175,8 +76,10 @@ public class Loan {
      */
     public static void start(BalanceSheet balanceSheet) {
         System.out.println("Welcome to the loans! \nType info for help.");
-        String[] nextOrder = StartMenu.order();
-        loanOrder(balanceSheet, nextOrder);
+        Boolean run = true;
+        while (run) {
+            run = loanOrder(balanceSheet);
+        }
     }
 
     /**
@@ -187,16 +90,41 @@ public class Loan {
     public static void issueLoan(BalanceSheet balanceSheet) {
 
         System.out.println("Type your loan name(string)");
-        String loanName = StartMenu.order()[0];
+        String[] order1 = StartMenu.order();
+        String loanName = "";
+        for (int i = 0; i < order1.length; i++) {
+            loanName += order1[i] + " ";
+        }
 
         System.out.println("Type your loan amount(double):");
-        double loanAmount = Double.parseDouble(StartMenu.order()[0]);
+        String[] order2 = StartMenu.order();
+        try {
+            Double.parseDouble(order2[0]);
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+            return;
+        }
+        double loanAmount = Double.parseDouble(order2[0]);
 
         System.out.println("Type your loan months(int):");
-        int loanMonths = Integer.parseInt(StartMenu.order()[0]);
+        String[] order3 = StartMenu.order();
+        try {
+            Integer.parseInt(order3[0]);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+            return;
+        }
+        int loanMonths = Integer.parseInt(order3[0]);
 
         System.out.println("Type your loan rate(double):");
-        double loanRate = Double.parseDouble(StartMenu.order()[0]);
+        String[] order4 = StartMenu.order();
+        try {
+            Double.parseDouble(order4[0]);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+            return;
+        }
+        double loanRate = Double.parseDouble(order4[0]);
 
         Loan loan = new Loan(loanName, loanAmount, loanMonths, loanRate / 100);
 
@@ -210,8 +138,6 @@ public class Loan {
 
         balanceSheet.addLoan(loan);
         balanceSheet.addCash(loanAmount);
-
-        start(balanceSheet);
     }
 
     /**
@@ -220,39 +146,76 @@ public class Loan {
      * @param balanceSheet the balance sheet
      * @param loan the loan to pay back
      */
-    public static void paybackLoan(BalanceSheet balanceSheet, Loan loan) {
-        balanceSheet.setCash(balanceSheet.getCash() - loan.getTotalPayment());
-
+    public static void payOffLoan(BalanceSheet balanceSheet) {
+        System.out.println("Please type the number of the loan you want to make pay off: ");
         Loan[] loans = balanceSheet.getLoans();
         for (int i = 0; i < loans.length; i++) {
-            if (loan.equals(loans[i])) {
-                loans[i] = null;
+            if (loans[i] != null) {
+                System.out.println((i + 1) + ".\nName: " + loans[i].getName());
             }
         }
+        String[] order = StartMenu.order();
+        try {
+            Integer.parseInt(order[0]);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid command, not a number");
+            return;
+        }
+        int loanNumber = Integer.parseInt(order[0]);
+        Loan loan = balanceSheet.getLoans()[loanNumber - 1];
+        balanceSheet.removeLoan(loan);
+        balanceSheet.setCash(balanceSheet.getCash() - loan.getAmount());
+        System.out.println("Payment made: " + loan.getAmount());
     }
 
     /**
      * Makes a single monthly payment on a loan.
      *
      * @param balanceSheet the balance sheet
-     * @param loan the loan to pay
      */
-    public static void paymentLoan(BalanceSheet balanceSheet, Loan loan) {
-        balanceSheet.setCash(balanceSheet.getCash() - loan.getMonthlyPayment());
-
+    public static void paymentLoan(BalanceSheet balanceSheet) {
+        System.out.println("Please type the number of the loan you want to make payment on: ");
         Loan[] loans = balanceSheet.getLoans();
         for (int i = 0; i < loans.length; i++) {
-            if (loan.equals(loans[i])) {
-                loans[i].amount -= (loans[i].getAmount() / loans[i].getMonths());
+            if (loans[i] != null) {
+                System.out.println((i + 1) + ".\nName: " + loans[i].getName());
             }
         }
-
-        System.out.println(
-            "Payment made on " + loan.getName() +
-            "\nremaining amount: " + loan.getAmount()
-        );
+        String[] order = StartMenu.order();
+        try {
+            Integer.parseInt(order[0]);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid command, not a number");
+            return;
+        }
+        int loanNumber = Integer.parseInt(order[0]);
+        Loan loan = balanceSheet.getLoans()[loanNumber - 1];
+        balanceSheet.setCash(balanceSheet.getCash() - loan.getMonthlyPayment());
+        loan.setAmount(loan.getAmount() - loan.getMonthlyPayment());
+        System.out.println("Payment made: " + loan.getMonthlyPayment() +"\n Remaining balance: " + loan.getAmount());
     }
 
+    /** Prints all loans in the balance sheet.
+     * @param balanceSheet the balance sheet **/
+    public static void printLoans(BalanceSheet balanceSheet) {
+        Loan[] loans = balanceSheet.getLoans();
+        for (int i = 0; i < loans.length; i++) {
+            if (loans[i] != null) {
+                System.out.println(
+                    "\nName: " + loans[i].getName() +
+                    "\nAmount: " + loans[i].getAmount() +
+                    "\nMonths: " + loans[i].getMonths() +
+                    "\nRate: " + (loans[i].getRate() * 100) +
+                    "\nMonthly payment: " + loans[i].getMonthlyPayment()
+                );
+            }
+        }
+    }
+
+    /** @param amount new loan amount */
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
     /** @return loan name */
     public String getName() {
         return name;

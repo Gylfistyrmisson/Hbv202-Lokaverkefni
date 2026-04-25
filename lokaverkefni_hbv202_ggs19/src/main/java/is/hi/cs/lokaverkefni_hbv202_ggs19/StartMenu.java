@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class StartMenu {
 
     /** Array storing all companies (max 10) */
-    private static Company[] companies = new Company[10];
+    private static Company[] companies = new Company[0];
 
     /** Tracks the current number of companies */
     private static int companyCount = 0;
@@ -42,6 +42,16 @@ public class StartMenu {
         return companies;
     }
 
+    public static void addCompany(Company company) {
+        Company[] newCompanies = new Company[companies.length + 1];
+        for (int i = 0; i < companies.length; i++) {
+            newCompanies[i] = companies[i];
+        }
+        companies = newCompanies;
+        companies[companies.length - 1] = company;
+        companyCount++;
+    }
+
     /**
      * Returns the number of companies currently stored.
      *
@@ -57,8 +67,24 @@ public class StartMenu {
      * @param place current location in the system
      */
     public static void structure(String place) {
-        System.out.println("You are at:" + place);
-        System.out.println("startpage\n|--company\n|--balancesheet\n   |--loans\n   |--inventory\n|--products\n|--shareholders\n   |--inputmaterials");
+        if (place.equals("startpage")) {
+            System.out.println("startpage <-- you are here!\n|--company\n|  |--balancesheet\n|  |  |--loans\n|  |  |--inventory\n|  |--products\n|  |--shareholders");
+        } else if (place.equals("company")) {
+            System.out.println("startpage\n|--company <-- you are here!\n|  |--balancesheet\n|  |  |--loans\n|  |  |--inventory\n|  |--products\n|  |--shareholders");
+        } else if (place.equals("balancesheet")) {
+            System.out.println("startpage\n|--company\n|  |--balancesheet <-- you are here!\n|  |  |--loans\n|  |  |--inventory\n|  |--products\n|  |--shareholders");
+        } else if (place.equals("loans")) {
+            System.out.println("startpage\n|--company\n|  |--balancesheet\n|  |  |--loans <-- you are here!\n|  |  |--inventory\n|  |--products\n|  |--shareholders");
+        } else if (place.equals("inventory")) {
+            System.out.println("startpage\n|--company\n|  |--balancesheet\n|  |  |--loans\n|  |  |--inventory <-- you are here!\n|  |--products\n|  |--shareholders");
+        } else if (place.equals("products")) {
+            System.out.println("startpage\n|--company\n|  |--balancesheet\n|  |  |--loans\n|  |  |--inventory\n|  |--products <-- you are here!\n|  |--shareholders");
+        } else if (place.equals("shareholders")) {
+            System.out.println("startpage\n|--company\n|  |--balancesheet\n|  |  |--loans\n|  |  |--inventory\n|  |--products\n|  |--shareholders <-- you are here!");
+        } else {
+            System.out.println("Invalid place.");
+            return;
+        }
     }
 
     /**
@@ -67,19 +93,33 @@ public class StartMenu {
      */
     public static void createCompany() {
         System.out.println("Enter company name: ");
-        String name = scanner.nextLine();
+        String[] order1 = order();
+        String name = "";
+        for (int i = 0; i < order1.length; i++) {
+            name += order1[i] + " ";
+        }
 
         System.out.println("Enter company cash: ");
-        Double cash = scanner.nextDouble();
+        String[] order2 = order();
+        try {
+            Double.parseDouble(order2[0]);
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+            return;
+        }
+        double cash = Double.parseDouble(order2[0]);
 
         System.out.println("Enter company shareholder: ");
-        scanner.nextLine(); // consume leftover newline
-        String shareholder = scanner.nextLine();
+        String[] order3 = order();
+        String shareholder = "";
+        for (int i = 0; i < order3.length; i++) {
+            shareholder += order3[i] + " ";
+        }
 
         Shareholder shareholder1 = new Shareholder(shareholder, 1, 0);
         Company company = new Company(name, cash, shareholder1);
 
-        companies[companies.length - 1] = company;
+        addCompany(company);
 
         company.companyStart();
     }
@@ -87,10 +127,12 @@ public class StartMenu {
     /**
      * Prints the names of all existing companies.
      */
-    public static void print() {
-        for (Company c : companies) {
-            if (c != null) {
-                System.out.println(c.getName());
+
+    public static void printStartMenu() {
+        System.out.println("Companies:");
+        for (int i = 0; i < companies.length; i++) {
+            if (companies[i] != null) {
+                System.out.println(" -" +companies[i].getName());
             }
         }
     }
@@ -101,47 +143,27 @@ public class StartMenu {
      *
      * @param order initial command input
      */
-    public static void start(String[] order) {
-        for (int i = 0; i < order.length; i++) {
-            System.out.println(order[i]);
-        }
-
-        while (true) {
-            if (order.length > 0) {
-                if (order[0].equals("start")) {
-                    System.out.println("Welcome to the startpage! \nType info for help.");
-                    String[] nextOrder = order();
-                    start(nextOrder);
-
-                } else if (order[0].equals("info")) {
-                    System.out.println("\"Command list:\\n info : display info of commands\\n access : layer benatch, followed by company name\\n print : prints out list of companies\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)\"");
-                    String[] nextOrder = order();
-                    start(nextOrder);
-
-                } else if (order[0].equals("print")) {
-                    for (int i = 0; i < companies.length; i++) {
-                        if (companies[i] != null) {
-                            System.out.println(companies[i].getName());
-                        }
-                    }
-                    String[] nextOrder = order();
-                    start(nextOrder);
-
-                } else if (order[0].equals("access") && order.length > 1) {
-                    access(order[1]);
-
-                } else if (order[0].equals("create")) {
-                    createCompany();
-
-                } else if (order[0].equals("exit")) {
-                    System.exit(0);
-
-                } else {
-                    System.out.println("Invalid command, type info for help.");
-                }
+    public static void startMenuOrder() {
+        String[] order = order();
+        if (order.length > 0) {
+            if (order[0].equals("info")) {
+                System.out.println("Command list:\n info : display info of commands\n access : followed by company name\n print : prints out list of companies\n structure : prints out where in company structure you are(global command)\n back : back to layer above(global command)\n exit : exit program(global command)");
+            } else if (order[0].equals("print")) {
+                printStartMenu();
+            } else if (order[0].equals("access") && order.length > 1) {
+                access(order[1]);
+            } else if (order[0].equals("structure")) {
+                structure("startpage");
+            } else if (order[0].equals("create")) {
+            } else if(order[0].equals("back")){
+                System.out.println("You are at top layer.");
+            } else if (order[0].equals("exit")) {
+                System.exit(0);
+            } else {
+                System.out.println("Invalid command, type info for help.");
             }
-            order = order();
         }
+        return;
     }
 
     /**
@@ -170,18 +192,21 @@ public class StartMenu {
      */
     public static void main(String[] args) {
 
-        // Initial test data
+        // Prop data
         Shareholder warrenBuffet = new Shareholder("Warren Buffett", 100, 0);
         Company apple = new Company("Apple", 1000000.0, warrenBuffet);
-
-        companies[companyCount] = apple;
-        companyCount++;
-
-        apple.getBalanceSheet().addLoan(new Loan("loan1", 1000.0, 24, 3.5));
-        apple.getBalanceSheet().addLoan(new Loan("loan2", 1500.0, 12, 4.0));
-
-        // Start program
-        String[] start = {"start"};
-        start(start);
+        addCompany(apple);
+        apple.getBalanceSheet().addLoan(new Loan("loan1", 1000.0, 24, 0.035));
+        apple.getBalanceSheet().addLoan(new Loan("loan2", 1500.0, 12, 0.04));
+        apple.addProduct(new Product("iPone", 1200, 100, 200));
+        apple.addProduct(new Product("iPad", 1500, 20, 300));
+        apple.addProduct(new Product("iMac", 2500, 100, 500));
+        
+        // start
+        System.out.println("Welcome to the company clone application!");
+        System.out.println("Type info for help.");
+        while(true) {
+            startMenuOrder();
+        }
     }
 }

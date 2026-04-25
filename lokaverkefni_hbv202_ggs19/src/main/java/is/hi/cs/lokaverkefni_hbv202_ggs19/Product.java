@@ -43,62 +43,30 @@ public class Product implements InventoryInterface {
      * @param order user input split into tokens
      * @param company the company whose products are managed
      */
-    public static void productOrder(String[] order, Company company) {
-        Product[] products = company.getProducts();
+    public static Boolean productOrder(Company company) {
+        String[] order = StartMenu.order();
 
         if (order[0].equals("info")) {
-            System.out.println("Command list:\\n add product : develop product\\n remove product: remove product\\n produce product : produce product to inventory\\n info : display info of commands\\n access : layer beneath\\n print : prints out summary of product data\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)");
-            String[] nextOrder = StartMenu.order();
-            productOrder(nextOrder, company);
-
+            System.out.println("Command list:\n add : develop product\n remove : remove product\n produce : produce product to inventory\n info : display info of commands\n print : prints out summary of product data\n structure : prints out where in company structure you are(global command)\n back : back to layer above(global command)\n exit : exit program(global command)");
         } else if (order[0].equals("print")) {
-            if (products.length > 0) {
-                for (int i = 0; i < products.length; i++) {
-                    if (products[i] != null) {
-                        System.out.println(
-                            "Name: " + products[i].getName() +
-                            "\nPrice: " + products[i].getPrice() +
-                            "\nQuantity: " + products[i].getQuantity()
-                        );
-                    }
-                }
-            } else {
-                System.out.println("No products developed yet.");
-            }
-            String[] nextOrder = StartMenu.order();
-            Product.productOrder(nextOrder, company);
-
+            printProducts(company);
         } else if (order[0].equals("structure")) {
             StartMenu.structure("products");
-            String[] nextOrder = StartMenu.order();
-            Product.productOrder(nextOrder, company);
-
-        } else if (order[0].equals("add") && order[1].equals("product")) {
+        } else if (order[0].equals("add")) {
             addProduct(company);
-            String[] nextOrder = StartMenu.order();
-            Product.productOrder(nextOrder, company);
-
-        } else if (order[0].equals("remove") && order[1].equals("product")) {
+        } else if (order[0].equals("remove")) {
             removeProduct(company);
-            String[] nextOrder = StartMenu.order();
-            Product.productOrder(nextOrder, company);
-
-        } else if (order[0].equals("produce") && order[1].equals("product")) {
+        } else if (order[0].equals("produce")) {
             produceProduct(company);
-            String[] nextOrder = StartMenu.order();
-            Product.productOrder(nextOrder, company);
-
         } else if (order[0].equals("back")) {
-            company.companyOrder(StartMenu.order());
-
+            System.out.println("Welcome to " + company.getName() + "'s company! \nType info for help.");
+            return false;
         } else if (order[0].equals("exit")) {
             System.exit(0);
-
         } else {
             System.out.println("Invalid command, type info for help.");
-            String[] nextOrder = StartMenu.order();
-            Product.productOrder(nextOrder, company);
         }
+        return true;
     }
 
     /**
@@ -108,10 +76,29 @@ public class Product implements InventoryInterface {
      */
     public static void productStart(Company company) {
         System.out.println("Welcome to product! \nType info for help.");
-        String[] order = StartMenu.order();
-        Product.productOrder(order, company);
+        Boolean run = true;
+        while (run) {
+            run = productOrder(company);
+        }
+        
     }
 
+    public static void printProducts(Company company) {
+        Product[] products = company.getProducts();
+        if (products.length > 0) {
+            for (int i = 0; i < products.length; i++) {
+                if (products[i] != null) {
+                    System.out.println(
+                        "Name: " + products[i].getName() +
+                        "\nPrice: " + products[i].getPrice() +
+                        "\nInventory: " + products[i].getQuantity()
+                    );
+                }
+            }
+        } else {
+            System.out.println("No products developed yet.");
+        }
+    }
     /**
      * Adds a new product to the company.
      *
@@ -122,16 +109,23 @@ public class Product implements InventoryInterface {
         String name = StartMenu.order()[0];
 
         System.out.println("Please type product price(double):");
-        double price = Double.parseDouble(StartMenu.order()[0]);
-
-        System.out.println("Please type product cost(double):");
-        double cost = Double.parseDouble(StartMenu.order()[0]);
-
-        Product product = new Product(name, price, 0, cost);
-        company.addProduct(product);
-
-        System.out.println("Product added!");
-        productStart(company);
+        String order1 = StartMenu.order()[0];
+        try {
+            double price = Double.parseDouble(order1);
+            System.out.println("Please type product cost(double):");
+            String order2 = StartMenu.order()[0];
+            try {
+                double cost = Double.parseDouble(order2);
+                Product product = new Product(name, price, 0, cost);
+                company.addProduct(product);
+                System.out.println("Product added!");
+            } catch (Exception e) {
+                System.out.println("Invalid input.");
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+        }
     }
 
     /**
@@ -145,16 +139,18 @@ public class Product implements InventoryInterface {
         System.out.println("Select product number:");
         for (int i = 0; i < products.length; i++) {
             if (products[i] != null) {
-                System.out.println(i + ": " + products[i].getName());
+                System.out.println((i+1) + ": " + products[i].getName());
             }
         }
 
-        int index = Integer.parseInt(StartMenu.order()[0]);
-
-        company.removeProduct(products[index]);
-        System.out.println("Product removed!");
-
-        productStart(company);
+        String order = StartMenu.order()[0];
+        try {
+            int index = Integer.parseInt(order);
+            company.removeProduct(products[index-1]);
+            System.out.println("Product removed!");
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+        }
     }
 
     /**
@@ -172,15 +168,19 @@ public class Product implements InventoryInterface {
             }
         }
 
-        int index = Integer.parseInt(StartMenu.order()[0]);
+        String order = StartMenu.order()[0];
+        try {
+            int index = Integer.parseInt(order);
 
-        System.out.println("Enter quantity:");
-        int quantity = Integer.parseInt(StartMenu.order()[0]);
+            System.out.println("Enter quantity:");
+            int quantity = Integer.parseInt(StartMenu.order()[0]);
 
-        company.produceProduct(products[index], quantity);
+            company.produceProduct(products[index], quantity);
 
-        System.out.println("Product produced!");
-        productStart(company);
+            System.out.println("Product produced!");
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+        }
     }
 
     /**

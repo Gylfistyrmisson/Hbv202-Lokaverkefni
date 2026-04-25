@@ -107,40 +107,4 @@ public class LoanTest extends TestCase {
         double totalInterest = loan.getTotalInterest();
         assertTrue("Total interest should be positive", totalInterest > 0);
     }
-
-    /**
-     * Tests paybackLoan functionality.
-     * Ensures loan is removed and cash is correctly updated.
-     */
-    public void testPaybackLoan() {
-        BalanceSheet balanceSheet = new BalanceSheet(
-            new Company("Test Company", 10000.0, new Shareholder("Test Shareholder", 1, 0)),
-            5000.0
-        );
-
-        balanceSheet.addLoan(loan);
-
-        double initialCash = balanceSheet.getCash();
-
-        Loan.paybackLoan(balanceSheet, loan);
-
-        assertEquals(
-            "Cash should be reduced by total payment",
-            initialCash - loan.getTotalPayment(),
-            balanceSheet.getCash(),
-            0.01
-        );
-
-        Loan[] loans = balanceSheet.getLoans();
-        boolean loanFound = false;
-
-        for (Loan l : loans) {
-            if (l != null && l.equals(loan)) {
-                loanFound = true;
-                break;
-            }
-        }
-
-        assertFalse("Loan should be removed from the loans array", loanFound);
-    }
 }

@@ -25,7 +25,7 @@ public class ShareholderTest extends TestCase {
 
         assertEquals("Alice", s.getName());
         assertEquals(100, s.getShares());
-        assertEquals(500.0, s.getDividendsCollected(), 0.0001);
+        assertEquals(500.0, s.getCashProfitCollected(), 0.0001);
     }
 
     /**
@@ -40,7 +40,7 @@ public class ShareholderTest extends TestCase {
 
         assertEquals("Charlie", s.getName());
         assertEquals(75, s.getShares());
-        assertEquals(300.0, s.getDividendsCollected(), 0.0001);
+        assertEquals(300.0, s.getCashProfitCollected(), 0.0001);
     }
 
     /**
@@ -90,7 +90,7 @@ public class ShareholderTest extends TestCase {
         Shareholder s = new Shareholder("Test", -10, -100.0);
 
         assertEquals(-10, s.getShares());
-        assertEquals(-100.0, s.getDividendsCollected(), 0.0001);
+        assertEquals(-100.0, s.getCashProfitCollected(), 0.0001);
 
         // (-100 / -10) = 10
         assertEquals(10.0, s.getDividendsPerShare(), 0.0001);

@@ -7,9 +7,6 @@ package is.hi.cs.lokaverkefni_hbv202_ggs19;
  */
 public class Inventory {
 
-    /** The balance sheet associated with the inventory */
-    private BalanceSheet balanceSheet;
-
     /** Array of products representing the inventory */
     private Product[] products;
 
@@ -20,7 +17,6 @@ public class Inventory {
      * @param company the company whose inventory is being accessed
      */
     public Inventory(Company company) {
-        this.balanceSheet = company.getBalanceSheet();
         this.products = company.getProducts();
     }
 
@@ -32,36 +28,23 @@ public class Inventory {
      * @param order user input split into command tokens
      * @param inventory the inventory instance being operated on
      */
-    public static void inventoryOrder(String[] order, Inventory inventory) {
-
+    public static Boolean inventoryOrder(Inventory inventory) {
+        String[] order = StartMenu.order();
         if (order[0].equals("info")) {
-            System.out.println("Command list:\\n info : display info of commands\\n print : prints out summary of inventory\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)\"");
-
+            System.out.println("Command list:\n info : display info of commands\n print : prints out summary of inventory\n structure : prints out where in company structure you are(global command)\n back : back to layer above(global command)\n exit : exit program(global command)");
         } else if (order[0].equals("print")) {
-            System.out.println("Inventory: " + inventory.products.length);
-
-            for (int i = 0; i < inventory.products.length; i++) {
-                if (inventory.products[i] != null) {
-                    System.out.println(
-                        inventory.products[i].getName() +
-                        ": " +
-                        inventory.products[i].getAmount()
-                    );
-                }
-            }
-
+            printInventory(inventory);
         } else if (order[0].equals("structure")) {
             StartMenu.structure("inventory");
-
         } else if (order[0].equals("back")) {
-            inventory.balanceSheet.start();
-
+            System.out.println("Welcome to the balance sheet! \nType info for help.");
+            return false;
         } else if (order[0].equals("exit")) {
             System.exit(0);
-
         } else {
             System.out.println("Invalid command, type info for help.");
         }
+        return true;
     }
 
     /**
@@ -72,14 +55,28 @@ public class Inventory {
      */
     public static void start(Company company) {
         Inventory inventory = new Inventory(company);
+        System.out.println("Welcome to the inventory! Type info for help.");
+        Boolean run = true;
+        while (run) {
+            run = inventoryOrder(inventory);
+        }
+    }
 
-        System.out.println("Welcome to the inventory! \nType info for help.");
-        System.out.println(
-            "This is the inventory of " + company.getName() +
-            ", to produce products or buy input materials please access products section in the company layer."
-        );
-
-        String[] order = StartMenu.order();
-        Inventory.inventoryOrder(order, inventory);
+    /**
+     * Prints the inventory contents.
+     */
+    public static void printInventory(Inventory inventory) {
+        System.out.println("Inventory: " + inventory.products.length);
+            for (int i = 0; i < inventory.products.length; i++) {
+                if (inventory.products[i] != null) {
+                    System.out.println(
+                        inventory.products[i].getName() +
+                        ":\n Quantity: " +
+                        inventory.products[i].getQuantity() +
+                        "\n Worth: " +
+                        (inventory.products[i].getPrice() * inventory.products[i].getQuantity()) + "\n"
+                    );
+                }
+            }
     }
 }

@@ -52,7 +52,7 @@ public class StartMenuTest extends TestCase {
         );
 
         // Call the method being tested
-        StartMenu.print();
+        StartMenu.printStartMenu();
 
         // Verify output contains the company name
         assertTrue(

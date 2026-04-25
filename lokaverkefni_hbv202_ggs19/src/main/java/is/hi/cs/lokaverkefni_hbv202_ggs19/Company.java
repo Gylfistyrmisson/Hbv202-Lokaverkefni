@@ -48,14 +48,11 @@ public class Company {
      *
      * @param order user input split into command tokens
      */
-    public void companyOrder(String[] order) {
-
+    public Boolean companyOrder() {
+        String[] order = StartMenu.order();
         if (order[0].equals("info")) {
-            System.out.println("Command list:\\n info : display info of commands\\n access : layer benatch, followed by: balance sheet / products / shareholders\\n print : prints out summary of company data\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)");
-            String[] nextOrder = StartMenu.order();
-            companyOrder(nextOrder);
-
-        } else if (order[0].equals("access")) {
+            System.out.println("Command list:\n info : display info of commands\n access : layer benatch, followed by: balance sheet / products / shareholders\n print : prints out summary of company data\n structure : prints out where in company structure you are(global command)\n back : back to layer above(global command)\n exit : exit program(global command)");
+        } else if (order[0].equals("access") && order.length > 1) {
             if (order[1].equals("balance") && order[2].equals("sheet")) {
                 balanceSheet.start();
             } else if (order[1].equals("products")) {
@@ -64,36 +61,21 @@ public class Company {
                 Shareholder.shareholderStart(shareholders, this);
             } else {
                 System.out.println("Invalid command, type info for help.");
-                String[] nextOrder = StartMenu.order();
-                companyOrder(nextOrder);
             }
-
         } else if (order[0].equals("print")) {
-            String shareholderList = "";
-            for (int i = 0; i < shareholders.length; i++) {
-                shareholderList += shareholders[i].getName() + "\n";
-            }
-            System.out.println("Name: " + name + "\nCash: " + balanceSheet.getCash() + "\nShareholders: " + shareholderList);
-            String[] nextOrder = StartMenu.order();
-            companyOrder(nextOrder);
-
+            printCompany();
         } else if (order[0].equals("structure")) {
             StartMenu.structure("company");
-            String[] nextOrder = StartMenu.order();
-            companyOrder(nextOrder);
-
         } else if (order[0].equals("back")) {
-            String[] nextOrder = new String[]{"start"};
-            StartMenu.start(nextOrder);
-
+            System.out.println("Welcome to the company clone application start menu.");
+            System.out.println("Type info for help.");
+            return false;
         } else if (order[0].equals("exit")) {
             System.exit(0);
-
         } else {
             System.out.println("Invalid command, type info for help.");
-            String[] nextOrder = StartMenu.order();
-            companyOrder(nextOrder);
         }
+        return true;
     }
 
     /**
@@ -101,11 +83,22 @@ public class Company {
      * Displays a welcome message and begins reading user commands.
      */
     public void companyStart() {
+        Boolean run = true;
         System.out.println("Welcome to " + name + "'s company! \nType info for help.");
-        String[] order = StartMenu.order();
-        companyOrder(order);
+        while (run) {
+            run = companyOrder();
+        }
     }
 
+    public void printCompany() {
+        System.out.println("Name: " + name + "\nCash: " + balanceSheet.getCash() +"\nNumber of products: " + products.length  + "\nNumber of shareholders: " + shareholders.length);
+    }
+
+    /**
+     * Removes a product from the company.
+     *
+     * @param product the product to remove
+     */
     public void removeProduct(Product product) {
         Product[] newProducts = new Product[products.length - 1];
         int index = 0;
@@ -132,6 +125,12 @@ public class Company {
         products = newProducts;
     }
 
+    /**
+     * Produces a product in the company and puts in inventory.
+     *
+     * @param product the product to produce
+     * @param quantity the quantity to produce
+     */
     public void produceProduct(Product product, int quantity) {
         if (product.getQuantity() > 0) {
             Product[] newProducts = new Product[products.length + 1];
@@ -142,6 +141,7 @@ public class Company {
             newProducts[newProducts.length - 1] = product;
             products = newProducts;
             balanceSheet.setCash(balanceSheet.getCash() - product.getCost() * product.getQuantity());
+            System.out.println("Product produced!");
         }
     }
 
@@ -158,6 +158,7 @@ public class Company {
         newShareholders[newShareholders.length - 1] = shareholder;
         shareholders = newShareholders;
         totalShares += shareholder.getShares();
+        System.out.println("Shareholder added!");
     }
 
     /**
@@ -169,18 +170,7 @@ public class Company {
     public void addShares(Shareholder shareholder, int shares) {
         shareholder.setShares(shareholder.getShares() + shares);
         totalShares += shares;
-    }
-
-    /**
-     * Sells shares from a shareholder to another shareholder.
-     *
-     * @param seller the shareholder selling shares
-     * @param buyer the shareholder buying shares
-     * @param shares the number of shares to sell
-     */
-    public void sellShares(Shareholder seller, Shareholder buyer, int shares) {
-        seller.setShares(seller.getShares() - shares);
-        buyer.setShares(buyer.getShares() + shares);
+        System.out.println("Shares added!");
     }
 
     /**
@@ -195,22 +185,40 @@ public class Company {
         }
         shareholders = newShareholders;
         totalShares -= shareholder.getShares();
+        System.out.println("Shareholder removed!");
     }
 
+    /**
+     * Pays dividends to shareholders.
+     *
+     * @param amount the amount of dividends to pay
+     */
     public void payDividends(double amount) {
         balanceSheet.setCash(balanceSheet.getCash() - totalShares * amount);
         for (Shareholder shareholder : shareholders) {
-            shareholder.setDividendsCollected(shareholder.getDividendsCollected() + shareholder.getShares() * amount);
+            shareholder.setDividendsCollected(shareholder.getCashProfitCollected() + shareholder.getShares() * amount);
         }
     }
 
+    /**
+     * Buys back shares from a shareholder.
+     *
+     * @param shareholder the shareholder buying back shares
+     * @param shares the number of shares to buy back
+     * @param amount the amount to buy back
+     */
     public void buyBackShares(Shareholder shareholder,int shares, double amount) {
         shareholder.setShares(shareholder.getShares() - shares);
         totalShares -= shares;
         balanceSheet.setCash(balanceSheet.getCash() - shares * amount);
-        shareholder.setDividendsCollected(shareholder.getDividendsCollected() + shareholder.getShares() * amount);
+        shareholder.setDividendsCollected(shareholder.getCashProfitCollected() + shareholder.getShares() * amount);
     }
 
+    /**
+     * Gets the company's cash.
+     *
+     * @return cash
+     */
     public double getCash() {
         return balanceSheet.getCash();
     }
