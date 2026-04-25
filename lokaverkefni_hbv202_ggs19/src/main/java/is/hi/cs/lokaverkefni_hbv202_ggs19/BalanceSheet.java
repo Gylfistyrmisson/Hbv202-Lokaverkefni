@@ -39,7 +39,7 @@ public class BalanceSheet {
     public void balancesheetOrder(String[] order) {
 
         if (order[0].equals("info")) {
-            System.out.println("Command list:\\n info : display info of commands\\n access : layer benath, followed by: loans, inventory\\n print : prints out summary of balance sheet data\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)\"");
+            System.out.println("Command list:\\n info : display info of commands\\n access : layer benath, followed by: loans, inventory\\n info : display info of commands\\n print : prints out summary of balance sheet data\\n structure : prints out where in company structure you are(global command)\\n back : back to layer above(global command)\\n exit : exit program(global command)\"");
             String[] nextOrder = StartMenu.order();
             balancesheetOrder(nextOrder);
 
@@ -47,7 +47,6 @@ public class BalanceSheet {
             if (order[1].equals("loans")) {
                 Loan.start(this);
             } else if (order[1].equals("inventory")) {
-                // Inventory handling
                 Inventory.start(company);
             } else {
                 System.out.println("The balance sheet does not contain a " + order[1] + " section to access.");

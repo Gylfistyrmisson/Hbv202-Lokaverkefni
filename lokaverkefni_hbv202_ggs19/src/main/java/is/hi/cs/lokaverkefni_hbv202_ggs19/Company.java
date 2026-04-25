@@ -197,8 +197,23 @@ public class Company {
         totalShares -= shareholder.getShares();
     }
 
-    
-    
+    public void payDividends(double amount) {
+        balanceSheet.setCash(balanceSheet.getCash() - totalShares * amount);
+        for (Shareholder shareholder : shareholders) {
+            shareholder.setDividendsCollected(shareholder.getDividendsCollected() + shareholder.getShares() * amount);
+        }
+    }
+
+    public void buyBackShares(Shareholder shareholder,int shares, double amount) {
+        shareholder.setShares(shareholder.getShares() - shares);
+        totalShares -= shares;
+        balanceSheet.setCash(balanceSheet.getCash() - shares * amount);
+        shareholder.setDividendsCollected(shareholder.getDividendsCollected() + shareholder.getShares() * amount);
+    }
+
+    public double getCash() {
+        return balanceSheet.getCash();
+    }
 
     /**
      * Gets the total shares.

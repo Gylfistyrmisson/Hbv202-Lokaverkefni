@@ -42,7 +42,7 @@ public class Shareholder {
     public static void shareholderOrder(String[] order, Shareholder[] shareholders, Company company) {
 
         if (order[0].equals("info")) {
-            System.out.println("Command list:\n add shareholder : add shareholder\n add shares : add shares to shareholder\n sell : sell shares to another shareholder\n remove shareholder : remove shareholder\n info : display info of commands\n print : prints out summary of shareholders\n structure : prints out where in company structure you are(global command)\n back : back to layer above(global command)\n exit : exit program(global command)");
+            System.out.println("Command list:\n add shareholder : add shareholder\n add shares : add shares to shareholder\n sell : sell shares to another shareholder\n remove shareholder : remove shareholder\n dividend : pay out dividends\n info : display info of commands\n print : prints out summary of shareholders\n structure : prints out where in company structure you are(global command)\n back : back to layer above(global command)\n exit : exit program(global command)");
             String[] nextOrder = StartMenu.order();
             Shareholder.shareholderOrder(nextOrder, shareholders, company);
 
@@ -63,6 +63,16 @@ public class Shareholder {
 
         } else if (order[0].equals("remove") && order[1].equals("shareholder")) {
             removeShareholder(company);
+            String[] nextOrder = StartMenu.order();
+            Shareholder.shareholderOrder(nextOrder, shareholders, company);
+
+        } else if (order[0].equals("dividend")) {
+            payDividends(company);
+            String[] nextOrder = StartMenu.order();
+            Shareholder.shareholderOrder(nextOrder, shareholders, company);
+
+        } else if (order[0].equals("buyback")) {
+            buyBackShares(company);
             String[] nextOrder = StartMenu.order();
             Shareholder.shareholderOrder(nextOrder, shareholders, company);
 
@@ -183,6 +193,84 @@ public class Shareholder {
         int index = Integer.parseInt(StartMenu.order()[0]) - 1;
 
         company.removeShareholder(shareholders[index]);
+    }
+
+    /**
+     * Pays dividends to shareholders.
+     *
+     * @param company the company being modified
+     */
+    public static void payDividends(Company company) {
+        System.out.println("Please enter dividend amount(double) per share(total cash per share ="+ company.getCash() / company.getTotalShares() +"):");
+        String[] order = StartMenu.order();
+        try {
+            double amount = Double.parseDouble(order[0]);
+            if (amount * company.getTotalShares() <= company.getCash()) {
+                company.payDividends(amount);    
+            } else {
+                System.out.println("Not enough cash.");
+                String[] nextOrder = StartMenu.order();
+                Shareholder.shareholderOrder(nextOrder, company.getShareholders(), company);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+        }
+    }
+
+    public static void buyBackShares(Company company) {
+        System.out.println("Please enter shareholder number from this list:");
+        for (int i = 0; i < company.getShareholders().length; i++) {
+            if (company.getShareholders()[i] != null) {
+                System.out.println((i + 1) + ". " + company.getShareholders()[i].getName());
+            }
+        }
+        String[] order1 = StartMenu.order();
+        try {
+            int index = Integer.parseInt(order1[0]) - 1;
+            company.getShareholders()[index].getShares();
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+            String[] nextOrder = StartMenu.order();
+            Shareholder.shareholderOrder(nextOrder, company.getShareholders(), company);
+        }
+
+        int index = Integer.parseInt(order1[0]) - 1;
+
+        if (company.getShareholders()[index].getShares() == 0) {
+            System.out.println("No shares to buy back.");
+            String[] nextOrder = StartMenu.order();
+            Shareholder.shareholderOrder(nextOrder, company.getShareholders(), company);
+        }
+
+        System.out.println("Please enter amount(int) of shares to buy back("+ company.getShareholders()[index].getShares() +" available):");
+        String[] order2 = StartMenu.order();
+        try {
+            int shares = Integer.parseInt(order2[0]);
+            if (shares > company.getShareholders()[index].getShares()) {
+                System.out.println("Not enough shares.");
+                String[] nextOrder = StartMenu.order();
+                Shareholder.shareholderOrder(nextOrder, company.getShareholders(), company);
+            }     
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input.");
+        }
+        int shares = Integer.parseInt(order2[0]);
+        System.out.println("Please enter amount(double) paid per share:");
+        String[] order3 = StartMenu.order();
+        try {
+            double amount = Double.parseDouble(order3[0]);
+            if (amount * shares > company.getCash()) {
+                System.out.println("Not enough cash.");
+                String[] nextOrder = StartMenu.order();
+                Shareholder.shareholderOrder(nextOrder, company.getShareholders(), company);
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+            String[] nextOrder = StartMenu.order();
+            Shareholder.shareholderOrder(nextOrder, company.getShareholders(), company);
+        }
+        double amount = Double.parseDouble(order3[0]);
+        company.buyBackShares(company.getShareholders()[index], shares, amount);   
     }
 
     /** @return shareholder name */
