@@ -90,7 +90,7 @@ public class Product implements InventoryInterface {
                     System.out.println(
                         "Name: " + products[i].getName() +
                         "\nPrice: " + products[i].getPrice() +
-                        "\nInventory: " + products[i].getQuantity()
+                        "\nInventory: " + products[i].getQuantity() + "\n"
                     );
                 }
             }

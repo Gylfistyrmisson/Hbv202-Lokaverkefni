@@ -132,16 +132,18 @@ public class Company {
      * @param quantity the quantity to produce
      */
     public void produceProduct(Product product, int quantity) {
-        if (product.getQuantity() > 0) {
-            Product[] newProducts = new Product[products.length + 1];
-            for (int i = 0; i < products.length; i++) {
-                newProducts[i] = products[i];
-            }
+        if (balanceSheet.getCash() >= product.getCost() * quantity) {
             product.setQuantity(product.getQuantity() + quantity);
-            newProducts[newProducts.length - 1] = product;
-            products = newProducts;
             balanceSheet.setCash(balanceSheet.getCash() - product.getCost() * product.getQuantity());
+
             System.out.println("Product produced!");
+        } else {
+            if (balanceSheet.getCash() <= product.getCost() * quantity) {
+                System.out.println(balanceSheet.getCash() + " - " + product.getCost() * quantity);
+                System.out.println("Product not produced, not enough cash.");
+            } else {
+                System.out.println("There was an error producing the product.");
+            }
         }
     }
 
