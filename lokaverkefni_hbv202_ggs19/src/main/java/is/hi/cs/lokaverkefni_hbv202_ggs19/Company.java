@@ -198,6 +198,7 @@ public class Company {
         for (Shareholder shareholder : shareholders) {
             shareholder.setDividendsCollected(shareholder.getCashProfitCollected() + shareholder.getShares() * amount);
         }
+        System.out.println("Dividends paid!");
     }
 
     /**

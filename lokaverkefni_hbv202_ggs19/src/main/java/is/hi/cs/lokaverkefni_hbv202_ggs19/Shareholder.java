@@ -55,14 +55,12 @@ public class Shareholder {
             removeShareholder(company);
         } else if (order[0].equals("dividend")) {
             payDividends(company);
-        } else if (order[0].equals("buyback")) {
-            buyBackShares(company);
         } else if (order[0].equals("print")) {
             printShareholders(company);
         } else if (order[0].equals("structure")) {
-            StartMenu.structure("ShareHolders");
+            StartMenu.structure("shareholders");
         } else if (order[0].equals("back")) {
-            System.out.println("Welcome to product! \nType info for help.");
+            System.out.println("Welcome to " + company.getName() + "'s company! \nType info for help.");
             return false;
         } else if (order[0].equals("exit")) {
             System.exit(0);
@@ -92,8 +90,8 @@ public class Shareholder {
                 if (shareholders[i] != null) {
                     System.out.println(
                         "Name: " + shareholders[i].getName() + 
-                        "\\n -Shares: " + shareholders[i].getShares() + " " +
-                        "\\n -Profit: " +shareholders[i].getCashProfitCollected() 
+                        "\n -Shares: " + shareholders[i].getShares() + " " +
+                        "\n -Profit: " +shareholders[i].getCashProfitCollected() + "\n \n " 
                     );
                 }
             }
@@ -195,57 +193,7 @@ public class Shareholder {
         }
     }
 
-    public static void buyBackShares(Company company) {
-        System.out.println("Please enter shareholder number from this list:");
-        for (int i = 0; i < company.getShareholders().length; i++) {
-            if (company.getShareholders()[i] != null) {
-                System.out.println((i + 1) + ". " + company.getShareholders()[i].getName());
-            }
-        }
-        String[] order1 = StartMenu.order();
-        try {
-            int index = Integer.parseInt(order1[0]) - 1;
-            company.getShareholders()[index].getShares();
-        } catch (Exception e) {
-            System.out.println("Invalid input.");
-            return;
-        }
-
-        int index = Integer.parseInt(order1[0]) - 1;
-
-        if (company.getShareholders()[index].getShares() == 0) {
-            System.out.println("No shares to buy back.");
-            return;
-        }
-
-        System.out.println("Please enter amount(int) of shares to buy back("+ company.getShareholders()[index].getShares() +" available):");
-        String[] order2 = StartMenu.order();
-        try {
-            int shares = Integer.parseInt(order2[0]);
-            if (shares > company.getShareholders()[index].getShares()) {
-                System.out.println("Not enough shares.");
-                return;
-            }     
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input.");
-        }
-        int shares = Integer.parseInt(order2[0]);
-        System.out.println("Please enter amount(double) paid per share:");
-        String[] order3 = StartMenu.order();
-        try {
-            double amount = Double.parseDouble(order3[0]);
-            if (amount * shares > company.getCash()) {
-                System.out.println("Not enough cash.");
-                return;
-            }
-        } catch (Exception e) {
-            System.out.println("Invalid input.");
-            return;
-        }
-        double amount = Double.parseDouble(order3[0]);
-        company.buyBackShares(company.getShareholders()[index], shares, amount);   
-    }
-
+    
     /** @return shareholder name */
     public String getName() {
         return name;

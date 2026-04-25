@@ -79,8 +79,7 @@ public class Product implements InventoryInterface {
         Boolean run = true;
         while (run) {
             run = productOrder(company);
-        }
-        
+        }   
     }
 
     public static void printProducts(Company company) {
@@ -164,7 +163,7 @@ public class Product implements InventoryInterface {
         System.out.println("Select product number:");
         for (int i = 0; i < products.length; i++) {
             if (products[i] != null) {
-                System.out.println(i + ": " + products[i].getName());
+                System.out.println((i+1) + ": " + products[i].getName());
             }
         }
 
@@ -175,9 +174,7 @@ public class Product implements InventoryInterface {
             System.out.println("Enter quantity:");
             int quantity = Integer.parseInt(StartMenu.order()[0]);
 
-            company.produceProduct(products[index], quantity);
-
-            System.out.println("Product produced!");
+            company.produceProduct(products[index-1], quantity);
         } catch (Exception e) {
             System.out.println("Invalid input.");
         }
