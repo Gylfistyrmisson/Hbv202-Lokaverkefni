@@ -63,7 +63,7 @@ public class BalanceSheet {
     /**
      * Starts the balance sheet interface.
      * Displays a welcome message and begins command processing.
-     */
+     */ 
     public void start() {
         Boolean run = true;
         System.out.println("Welcome to the balance sheet! \nType info for help.");
